@@ -1,5 +1,5 @@
 module.exports = function toReadable(number) {
-    const onesWords = [
+    const ones = [
         "",
         "one",
         "two",
@@ -22,7 +22,7 @@ module.exports = function toReadable(number) {
         "nineteen",
     ];
 
-    const tensWords = [
+    const tens = [
         "",
         "",
         "twenty",
@@ -35,31 +35,28 @@ module.exports = function toReadable(number) {
         "ninety",
     ];
 
-    function getNumberWord(num) {
-        if (num < 20) {
-            return onesWords[num];
-        } else {
-            return (
-                tensWords[Math.floor(num / 10)] +
-                (num % 10 !== 0 ? " " + onesWords[num % 10] : "")
-            );
-        }
-    }
-
     if (number === 0) {
         return "zero";
     }
 
-    const digits = Array.from(String(number), Number);
+    let result = "";
 
-    if (number < 20) {
-        return onesWords[number];
-    } else if (number < 100) {
-        // Updated to handle numbers like 20, 30, 40, etc.
-        return digits[1] === 0 ? tensWords[digits[0]] : getNumberWord(number);
-    } else {
-        const hundredsPlace = onesWords[digits[0]] + " hundred";
-        const restOfNumber = getNumberWord(digits.slice(1).join(""));
-        return hundredsPlace + (restOfNumber ? " " + restOfNumber : "");
+    // Преобразуем сотни
+    if (number >= 100) {
+        result += ones[Math.floor(number / 100)] + " hundred ";
+        number %= 100; // Оставляем только двузначное число
     }
+
+    // Преобразуем числа от 1 до 19
+    if (number > 0 && number < 20) {
+        result += ones[number];
+    } else {
+        // Преобразуем десятки
+        result += tens[Math.floor(number / 10)] + " ";
+        // Преобразуем единицы
+        result += ones[number % 10];
+    }
+
+    // Удаляем лишние пробелы в конце строки
+    return result.trim();
 };
